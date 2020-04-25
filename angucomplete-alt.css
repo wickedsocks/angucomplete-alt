@@ -65,3 +65,16 @@
     height: 34px;
     width: 34px;
 }
+
+.angu-clear-icon {
+    border: 1px solid transparent;
+    position: absolute;
+    right: 0px;
+    top:0px;
+    background-color: transparent;
+    font-size: 18px;
+    padding: 6px 7px;
+    color: #ababab;
+    outline: 0;
+    cursor: pointer;
+  }

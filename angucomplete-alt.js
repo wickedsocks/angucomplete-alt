@@ -47,6 +47,7 @@
     $templateCache.put(TEMPLATE_URL,
         '<div class="angucomplete-holder" ng-class="{\'angucomplete-dropdown-visible\': showDropdown}">' +
         '  <input id="{{id}}_value" name="{{inputName}}" tabindex="{{fieldTabindex}}" ng-class="{\'angucomplete-input-not-empty\': notEmpty}" ng-model="searchStr" ng-disabled="disableInput" type="{{inputType}}" placeholder="{{placeholder}}" maxlength="{{maxlength}}" ng-focus="onFocusHandler()" class="{{inputClass}}" ng-focus="resetHideResults()" ng-blur="hideResults($event)" autocapitalize="off" autocorrect="off" autocomplete="off" ng-change="inputChangeHandler(searchStr)"/>' +
+        '  <button class="angu-clear-icon fa fa-times-circle" ng-show="searchStr && clearButton" ng-click="clearInput(true)" type="reset"></button>' +
         '  <div id="{{id}}_dropdown" class="angucomplete-dropdown" ng-show="showDropdown">' +
         '    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>' +
         '    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>' +
@@ -120,10 +121,7 @@
 
       scope.$on('angucomplete-alt:clearInput', function (event, elementId) {
         if (!elementId || elementId === scope.id) {
-          scope.searchStr = null;
-          callOrAssign();
-          handleRequired(false);
-          clearResults();
+          scope.clearInput();
         }
       });
 
@@ -641,7 +639,7 @@
         if (scope.focusIn) {
           scope.focusIn();
         }
-        if (minlength === 0 && (!scope.searchStr || scope.searchStr.length === 0)) {
+        if (minlength === 0 && (!scope.searchStr || scope.searchStr.length === 0) || !scope.notShowAllOnFocus) {
           scope.currentIndex = scope.focusFirst ? 0 : scope.currentIndex;
           scope.showDropdown = true;
           showAll();
@@ -721,6 +719,17 @@
           str = scope.inputChanged(str);
         }
         return str;
+      };
+
+      scope.clearInput = function(showDropdown){
+        scope.searchStr = null;
+        callOrAssign();
+        handleRequired(false);
+        clearResults();
+
+        if(showDropdown){
+          inputField.focus();
+        }
       };
 
       // check required
@@ -825,7 +834,9 @@
         fieldTabindex: '@',
         inputName: '@',
         focusFirst: '@',
-        parseInput: '&'
+        parseInput: '&',
+        notShowAllOnFocus: '@',
+        clearButton: '@'
       },
       templateUrl: function(element, attrs) {
         return attrs.templateUrl || TEMPLATE_URL;
